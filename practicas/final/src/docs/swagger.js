@@ -24,6 +24,10 @@ const item = (label) => ({
   put: op(`Actualizar ${label}`, true),
   delete: op(`Eliminar o archivar ${label}`)
 });
+const jsonBody = (schema, example) => ({
+  required: true,
+  content: { 'application/json': { schema, example } }
+});
 
 export default swaggerJsdoc({
   definition: {
@@ -36,10 +40,50 @@ export default swaggerJsdoc({
     },
     paths: {
       '/api/user/register': {
-        post: { ...op('Registrar usuario', true), security: [] },
-        put: op('Completar datos personales', true)
+        post: {
+          ...op('1. Registrar usuario', true),
+          security: [],
+          requestBody: jsonBody(
+            {
+              type: 'object',
+              required: ['email', 'password'],
+              properties: {
+                email: { type: 'string', format: 'email' },
+                password: { type: 'string', minLength: 8 }
+              }
+            },
+            { email: 'demo@example.com', password: 'Password123!' }
+          )
+        },
+        put: {
+          ...op('3. Completar datos personales (requiere token)', true),
+          requestBody: jsonBody(
+            {
+              type: 'object',
+              required: ['name', 'lastName', 'nif'],
+              properties: {
+                name: { type: 'string' },
+                lastName: { type: 'string' },
+                nif: { type: 'string' }
+              }
+            },
+            { name: 'Demo', lastName: 'Usuario', nif: '00000000T' }
+          )
+        }
       },
-      '/api/user/validation': { put: op('Validar email', true) },
+      '/api/user/validation': {
+        put: {
+          ...op('2. Validar email (requiere token)', true),
+          requestBody: jsonBody(
+            {
+              type: 'object',
+              required: ['code'],
+              properties: { code: { type: 'string', pattern: '^\\d{6}$' } }
+            },
+            { code: '123456' }
+          )
+        }
+      },
       '/api/user/login': { post: { ...op('Iniciar sesión', true), security: [] } },
       '/api/user/company': { patch: op('Onboarding de compañía', true) },
       '/api/user/logo': { patch: op('Subir logo') },
