@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Sala de chat</title>
+<style>body{font:15px system-ui;max-width:850px;margin:auto;padding:1rem}.layout{display:grid;grid-template-columns:240px 1fr;gap:1rem}ul{padding:0;list-style:none}button,input{padding:.55rem}#messages{height:55vh;overflow:auto;border:1px solid #ccc;padding:1rem}.message{margin:.4rem 0}</style></head>
+<body>
+<h1>Salas</h1>
+<div class="layout"><aside><form id="newRoom"><input id="roomName" placeholder="Nueva sala"><button>Crear</button></form><ul id="rooms"></ul><h3>Conectados</h3><ul id="users"></ul></aside>
+<main><div id="messages"></div><p id="typing"></p><form id="send"><input id="content" autocomplete="off" placeholder="Mensaje"><button>Enviar</button></form></main></div>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const token=localStorage.getItem('chatToken');if(!token)location.href='/';
+const headers={Authorization:`Bearer ${token}`,'Content-Type':'application/json'};
+const socket=io({auth:{token}});let roomId;
+async function loadRooms(){const r=await fetch('/api/rooms',{headers});const {data}=await r.json();rooms.innerHTML=data.map(x=>`<li><button data-id="${x._id}">${x.name}</button></li>`).join('')}
+rooms.onclick=async e=>{if(!e.target.dataset.id)return;roomId=e.target.dataset.id;socket.emit('room:join',{roomId});const r=await fetch(`/api/rooms/${roomId}/messages`,{headers});const {data}=await r.json();messages.innerHTML=data.map(show).join('')};
+newRoom.onsubmit=async e=>{e.preventDefault();await fetch('/api/rooms',{method:'POST',headers,body:JSON.stringify({name:roomName.value})});roomName.value='';loadRooms()};
+send.onsubmit=e=>{e.preventDefault();socket.emit('chat:message',{roomId,content:content.value});content.value=''};
+content.oninput=()=>socket.emit('chat:typing',{roomId,typing:true});
+const show=m=>`<div class="message"><b>${m.user.username}</b>: ${m.content}</div>`;
+socket.on('chat:message',m=>{messages.insertAdjacentHTML('beforeend',show(m));messages.scrollTop=messages.scrollHeight});
+socket.on('chat:typing',m=>{typing.textContent=`${m.user.username} está escribiendo…`;setTimeout(()=>typing.textContent='',1200)});
+socket.on('room:joined',d=>users.innerHTML=d.users.map(u=>`<li>${u.username}</li>`));
+socket.on('room:user-joined',d=>users.innerHTML=d.users.map(u=>`<li>${u.username}</li>`));
+socket.on('room:user-left',d=>users.innerHTML=d.users.map(u=>`<li>${u.username}</li>`));
+loadRooms();
+</script></body></html>

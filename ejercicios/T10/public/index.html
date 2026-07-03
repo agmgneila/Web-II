@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Chat T10</title>
+<style>body{font:16px system-ui;max-width:520px;margin:3rem auto;padding:1rem}form{display:grid;gap:.7rem}input,button{padding:.75rem}a{display:block;margin-top:1rem}</style></head>
+<body>
+<h1>Chat en tiempo real</h1>
+<form id="auth">
+  <input id="username" placeholder="Nombre (solo registro)">
+  <input id="email" type="email" placeholder="Email" required>
+  <input id="password" type="password" placeholder="Contraseña" required>
+  <button name="action" value="login">Entrar</button>
+  <button name="action" value="register">Registrarse</button>
+</form>
+<p id="error"></p>
+<script>
+auth.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const action = event.submitter.value;
+  const response = await fetch('/api/auth/' + action, {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({username:username.value,email:email.value,password:password.value})
+  });
+  const data = await response.json();
+  if (!response.ok) return error.textContent = data.message;
+  localStorage.setItem('chatToken', data.token);
+  location.href = '/chat.html';
+});
+</script>
+</body></html>
