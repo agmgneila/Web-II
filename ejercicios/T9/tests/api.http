@@ -1,0 +1,18 @@
+@base = http://localhost:3000/api
+@token = PEGA_AQUI_EL_TOKEN
+
+### Registro
+POST {{base}}/auth/register
+Content-Type: application/json
+
+{"name":"Ana","email":"ana@example.com","password":"Password123"}
+
+### Catálogo
+GET {{base}}/books?available=true&page=1&limit=10
+
+### Solicitar préstamo
+POST {{base}}/loans
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"bookId":1}
