@@ -37,3 +37,9 @@ docker compose up --build
 ```
 
 Las credenciales reales no deben incluirse nunca en Git.
+
+En desarrollo, si no se configura SMTP, el código de verificación se muestra
+en la consola. Si no se configura Cloudinary, las firmas y PDF se guardan en
+`uploads/cloud/`. En producción ambas integraciones son obligatorias.
+Para facilitar una demostración local, la respuesta del registro también
+incluye `verificationCode` exclusivamente cuando `NODE_ENV=development`.

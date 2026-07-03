@@ -31,7 +31,11 @@ export const register = async (req, res) => {
   const tokens = await issueTokens(user);
   await sendVerification(user.email, user.verificationCode);
   notifications.emit('user:registered', { userId: user.id, email: user.email });
-  res.status(201).json({ user: { email: user.email, status: user.status, role: user.role }, ...tokens });
+  res.status(201).json({
+    user: { email: user.email, status: user.status, role: user.role },
+    ...tokens,
+    ...(process.env.NODE_ENV === 'development' && { verificationCode: user.verificationCode })
+  });
 };
 
 export const validateEmail = async (req, res) => {

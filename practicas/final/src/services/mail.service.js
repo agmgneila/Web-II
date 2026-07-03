@@ -3,6 +3,10 @@ import nodemailer from 'nodemailer';
 export const sendVerification = async (email, code) => {
   if (!process.env.SMTP_HOST) {
     if (process.env.NODE_ENV === 'test') return;
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`[email:development] ${email} -> código ${code}`);
+      return;
+    }
     throw new Error('Falta configuración SMTP');
   }
   const transport = nodemailer.createTransport({
