@@ -1,0 +1,14 @@
+@base = http://localhost:3000/api
+@token = PEGA_AQUI_ACCESS_TOKEN
+
+### Clientes
+GET {{base}}/client?page=1&limit=10
+Authorization: Bearer {{token}}
+
+### Proyectos
+GET {{base}}/project?active=true
+Authorization: Bearer {{token}}
+
+### Albaranes
+GET {{base}}/deliverynote?format=hours&signed=false
+Authorization: Bearer {{token}}
