@@ -28,6 +28,50 @@ const jsonBody = (schema, example) => ({
   required: true,
   content: { 'application/json': { schema, example } }
 });
+const idParameter = {
+  name: 'id',
+  in: 'path',
+  required: true,
+  description: 'Identificador del recurso',
+  schema: { type: 'string' }
+};
+const fileBody = (field, description) => ({
+  required: true,
+  content: {
+    'multipart/form-data': {
+      schema: {
+        type: 'object',
+        required: [field],
+        properties: {
+          [field]: { type: 'string', format: 'binary', description }
+        }
+      }
+    }
+  }
+});
+const documentedPaths = (paths) => {
+  const result = Object.fromEntries(
+    Object.entries(paths).map(([path, pathItem]) => [
+      path,
+      path.includes('{id}') ? { parameters: [idParameter], ...pathItem } : pathItem
+    ])
+  );
+
+  result['/api/user/logo'].patch.requestBody =
+    fileBody('logo', 'Imagen del logotipo');
+  result['/api/deliverynote/{id}/sign'].patch.requestBody =
+    fileBody('signature', 'Imagen de la firma');
+
+  const pdfOperation = result['/api/deliverynote/pdf/{id}'].get;
+  pdfOperation.responses[200] = {
+    description: 'PDF del albarán',
+    content: {
+      'application/pdf': { schema: { type: 'string', format: 'binary' } }
+    }
+  };
+
+  return result;
+};
 
 export default swaggerJsdoc({
   definition: {
@@ -38,7 +82,7 @@ export default swaggerJsdoc({
       schemas: Object.fromEntries(['User', 'Company', 'Client', 'Project', 'DeliveryNote']
         .map((name) => [name, { type: 'object', properties: { _id: { type: 'string' } } }]))
     },
-    paths: {
+    paths: documentedPaths({
       '/api/user/register': {
         post: {
           ...op('1. Registrar usuario', true),
@@ -106,7 +150,7 @@ export default swaggerJsdoc({
       },
       '/api/deliverynote/pdf/{id}': { get: op('Descargar PDF') },
       '/api/deliverynote/{id}/sign': { patch: op('Firmar albarán') }
-    }
+    })
   },
   apis: []
 });
