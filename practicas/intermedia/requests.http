@@ -1,0 +1,22 @@
+@base = http://localhost:3000/api/user
+@token = PEGA_AQUI_ACCESS_TOKEN
+
+### Registro
+POST {{base}}/register
+Content-Type: application/json
+
+{"email":"usuario@example.com","password":"Password123!"}
+
+### Validación
+PUT {{base}}/validation
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"code":"000000"}
+
+### Datos personales
+PUT {{base}}/register
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"name":"Nombre","lastName":"Apellidos","nif":"00000000T"}

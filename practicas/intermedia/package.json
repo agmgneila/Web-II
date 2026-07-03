@@ -1,0 +1,22 @@
+{
+  "name": "bildyapp-intermedia",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch --env-file=.env src/index.js",
+    "start": "node --env-file=.env src/index.js",
+    "test:integration": "node --env-file=.env tests/integration.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "express": "^5.1.0",
+    "express-rate-limit": "^7.5.1",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.16.0",
+    "multer": "^2.0.2",
+    "zod": "^3.25.0"
+  },
+  "engines": { "node": ">=22" }
+}
