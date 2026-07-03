@@ -5,7 +5,8 @@ enunciados de la asignatura.
 
 ## Estructura
 
-- `ejercicios/T1` a `ejercicios/T10`: ejercicios independientes por tema.
+- `ejercicios/T1` a `ejercicios/T10`: ejercicios independientes por tema
+  (el repositorio docente no publica un ejercicio T7).
 - `practicas/intermedia`: API de usuarios de BildyApp.
 - `practicas/final`: API completa de digitalización de albaranes.
 
@@ -22,8 +23,15 @@ Los secretos nunca se incluyen en el repositorio. Copia el `.env.example` de
 cada proyecto a `.env` y completa únicamente las credenciales del entorno de
 desarrollo.
 
+## Verificación
+
+- T1–T4 se verifican localmente sin servicios externos.
+- T5, T6, T8, T10 y las prácticas usan MongoDB.
+- T9 tiene su migración aplicada en Supabase/PostgreSQL.
+- La práctica final supera el 70 % de cobertura exigido y dispone de un workflow
+  de GitHub Actions en la raíz del repositorio.
+
 ## Procedencia
 
 Los enunciados se encuentran en
 [`rpmaya/webII_public`](https://github.com/rpmaya/webII_public).
-
